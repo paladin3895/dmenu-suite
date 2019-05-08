@@ -17,33 +17,33 @@ singleState=$(awk '/repeat:/{ print $7; }' <<< "${stateLine}")
 consumeState=$(awk '/repeat:/{ print $9; }' <<< "${stateLine}")
 
 # Menu Items
-mainMenu="[Select]
-[PushDir]
-[PushLoop]
-[Current]
-[Play]
-[Stop]
-[Pause]
-[Load]
-[Playlist]
-[Clear]
-[Previous]
-[Next]
-[Seek]
-[Replay]
-[Random: ${randomState}]
-[Repeat: ${repeatState}]
-[Single: ${singleState}]
-[Consume: ${consumeState}]
-[Lyrics]
-[Rescan]"
+mainMenu="[select]
+[push-dir]
+[push-loop]
+[current]
+[play]
+[stop]
+[pause]
+[load]
+[playlist]
+[clear]
+[previous]
+[next]
+[seek]
+[replay]
+[random: ${randomState}]
+[repeat: ${repeatState}]
+[single: ${singleState}]
+[consume: ${consumeState}]
+[lyrics]
+[rescan]"
 
-playlistOptions="[AddAll]
-[Remove]
-[Clear]
-[Save]
-[Load]
-[Delete]"
+playlistOptions="[add-all]
+[remove]
+[clear]
+[save]
+[load]
+[delete]"
 
 seekOptions="0%
 10%
@@ -72,7 +72,7 @@ filename"
 
 action=$(menu "Option: " "${mainMenu}")
 case "${action}" in
-    '[Select]')
+    '[select]')
         candidates=$(mpc playlist --format '%position%  [%album% - ][%artist% - ]%title%')
         selection=$(menu "Song: " "${candidates}")
 
@@ -84,7 +84,7 @@ case "${action}" in
             fi
         fi
         ;;
-    '[PushDir]')
+    '[push-dir]')
         pushd ${MUSIC_DIR} > /dev/null
         musicDirList=$(find . -type d | sed -e 's!^\./!!')
         popd > /dev/null
@@ -94,7 +94,7 @@ case "${action}" in
             mpc ls "${query}" | mpc -q add
         fi
         ;;
-    '[PushLoop]')
+    '[push-loop]')
         # if [[ ! -a "${CACHE_FILE}" || "${CACHE_FILE}" -ot "${MUSIC_DIR}" ]]; then
         #     notify-send "MPD:" "Building Cache"
         #     musicList=$(mpc listall | tee "${CACHE_FILE}")
@@ -126,20 +126,20 @@ case "${action}" in
             fi
         done
         ;;
-    '[Current]')
+    '[current]')
         songInfo=$(mpc -f 'Title:  [%title%]\nArtist: [%artist%]\nAlbum:  [%album%]\n ')
         notify-send "MPD:" "${songInfo}"
         ;;
-    '[Play]')
+    '[play]')
         mpc -q toggle
         ;;
-    '[Stop]')
+    '[stop]')
         mpc -q stop
         ;;
-    '[Pause]')
+    '[pause]')
         mpc -q toggle
         ;;
-    '[Load]')
+    '[load]')
         choice=$(menu "Load: " "$(mpc lsplaylists)")
         if [[ -n "${choice}" ]]; then
             mpc -q stop
@@ -148,14 +148,14 @@ case "${action}" in
             notify-send "MPD:" "Playlist \"${choice}\" Loaded"
         fi
         ;;
-    '[Playlist]')
+    '[playlist]')
         action=$(menu "Option: " "${playlistOptions}")
         case "${action}" in
-            '[AddAll]')
+            '[add-all]')
                 mpc -q update
                 mpc ls | mpc -q add
                 ;;
-            '[Remove]')
+            '[remove]')
                 selection="a"
                 while [[ -n "${selection}" ]]; do
                     candidates=$(mpc playlist --format '%position%  [%album% - ][%artist% - ]%title%')
@@ -167,11 +167,11 @@ case "${action}" in
                     fi
                 done
             ;;
-            '[Clear]')
+            '[clear]')
                 mpc -q clear
                 notify-send "MPD:" "Playlist Cleared"
                 ;;
-            '[Load]')
+            '[load]')
                 choice=$(menu "Load: " "$(mpc lsplaylists)")
                 if [[ -n "${choice}" ]]; then
                     mpc -q stop
@@ -180,14 +180,14 @@ case "${action}" in
                     notify-send "MPD:" "Playlist \"${choice}\" Loaded"
                 fi
                 ;;
-            '[Save]')
+            '[save]')
                 name=$(menu "Load: " "$(mpc lsplaylists)")
                 if [[ -n "${name}" ]]; then
                     mpc save "${name}"
                     notify-send "MPD:" "Playlist \"${name}\" Saved"
                 fi
                 ;;
-            '[Delete]')
+            '[delete]')
                 name=$(menu "Load: " "$(mpc lsplaylists)")
                 if [[ -n "${name}" ]]; then
                     mpc rm "${name}"
@@ -196,23 +196,23 @@ case "${action}" in
                 ;;
         esac
         ;;
-    '[Clear]')
+    '[clear]')
         mpc -q clear
         notify-send "MPD:" "Playlist Cleared"
         ;;
-    '[Previous]')
+    '[previous]')
         mpc -q prev
         ;;
-    '[Next]')
+    '[next]')
         mpc -q next
         ;;
-    '[Seek]')
+    '[seek]')
         seek=$(menu "Seek: " "${seekOptions}")
         if [[ -n "${seek}" ]]; then
             mpc -q seek "${seek}"
         fi
         ;;
-    '[Replay]')
+    '[replay]')
         mpc -q stop
         mpc -q play
         ;;
@@ -228,7 +228,7 @@ case "${action}" in
     '[Consume'*)
         mpc -q consume
         ;;
-    '[Lyrics]')
+    '[lyrics]')
         song=$(mpc current)
         lyricsFile="$HOME/.lyrics/${song}.txt"
 
@@ -248,7 +248,7 @@ case "${action}" in
             fi
         fi
         ;;
-    '[Rescan]')
+    '[rescan]')
         notify-send "MPD Database" "Updating"
         mpc -q update
         ;;
