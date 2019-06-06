@@ -73,7 +73,7 @@ filename"
 action=$(menu "Option: " "${mainMenu}")
 case "${action}" in
     '[select]')
-        candidates=$(mpc playlist --format '%position%  [%album% - ][%artist% - ]%title%')
+        candidates=$(mpc playlist --format '%position%  [%album% - ][%artist% - ]%file%')
         selection=$(menu "Song: " "${candidates}")
 
         # Only select song if not in consume ("playback queue") mode.
